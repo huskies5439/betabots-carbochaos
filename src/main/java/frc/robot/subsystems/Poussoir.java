@@ -13,17 +13,17 @@ public class Poussoir extends SubsystemBase {
   private DoubleSolenoid piston = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 2);
   
   public Poussoir() {
-    pistonIn();
+    rentrer();
   }
 
   @Override
   public void periodic() {}
 
-  public void pistonIn() {
+  public void rentrer() {
     piston.set(Value.kForward);
   }
 
-  public void pistonOut() {
+  public void sortir() {
     piston.set(Value.kReverse);
   }
 

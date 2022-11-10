@@ -16,7 +16,7 @@ import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 public class RobotContainer {
   
   private final BasePilotable basePilotable = new BasePilotable();
-  private final Poussoir piston = new Poussoir();
+  private final Poussoir poussoir = new Poussoir();
  
   XboxController manette = new XboxController(0);
 
@@ -27,7 +27,7 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    new JoystickButton(manette, Button.kA.value).toggleWhenPressed(new Pousser(piston));
+    new JoystickButton(manette, Button.kA.value).toggleWhenPressed(new Pousser(poussoir));
   }
 
   public Command getAutonomousCommand() {
