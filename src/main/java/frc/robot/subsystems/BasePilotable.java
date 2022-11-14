@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.function.DoubleSupplier;
 
 import com.ctre.phoenix.motorcontrol.NeutralMode;
-import com.ctre.phoenix.motorcontrol.TalonFXFeedbackDevice;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
@@ -43,30 +42,50 @@ import edu.wpi.first.math.util.Units;
 
 public class BasePilotable extends SubsystemBase {
   
+  //Créer l'ensemble des moteurs de la base
   private WPI_TalonFX moteurGauche = new WPI_TalonFX(1);
   private WPI_TalonFX moteurDroit = new WPI_TalonFX(3);
-  private ADXRS450_Gyro gyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
   private DifferentialDrive drive = new DifferentialDrive(moteurGauche, moteurDroit);
 
-  private ShuffleboardTab calibration = Shuffleboard.getTab("calibration");
-  private NetworkTableEntry voltageDrive = calibration.add("voltageDrive",0).getEntry();
-
+  //Créer le gyro
+  private ADXRS450_Gyro gyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
+  
+  
+ 
   private double conversionEncodeur;
-  private final double conversionMoteur = (1.0/2048)*(14.0/72)*(16.0/44)*Math.PI*Units.inchesToMeters(4);
+ // private final double conversionEncodeur = (1.0/2048)*(14.0/72)*(16.0/44)*Math.PI*Units.inchesToMeters(4);
   private DifferentialDriveOdometry odometry;
-  private SimpleMotorFeedforward tournerFF = new SimpleMotorFeedforward(0.496, 0.0287);
-  private ProfiledPIDController tournerPID = new ProfiledPIDController(0.20, 0, 0, new TrapezoidProfile.Constraints(90, 90));
-  private MedianFilter filter = new MedianFilter(5);
+
 
   public BasePilotable() {
     //Configure les moteurs
-    conversionEncodeur = (1.0/2048)*(14.0/72)*(16.0/44)*Math.PI*Units.inchesToMeters(4); 
     setRamp(0);
     setBrake(false);
     moteurGauche.setInverted(true);
     moteurDroit.setInverted(false);
 
+    conversionEncodeur = (1.0/2048)*(14.0/72)*(16.0/44)*Math.PI*Units.inchesToMeters(4); 
+
+    //Faire les resets 
+    resetEncoder();
+    resetGyro();
+
   }
+
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+   
+    SmartDashboard.putNumber("Angle", getAngle());
+    //SmartDashboard.putNumber("Vitesse Droite", getVitesseD());
+    //SmartDashboard.putNumber("Vitesse Gauche", getVitesseG());
+    SmartDashboard.putNumber("Vitesse Moyenne", getVitesse()); 
+    //SmartDashboard.putNumber("Position Droite", getPositionD());
+    //SmartDashboard.putNumber("Position Gauche", getPositionG());
+    SmartDashboard.putNumber("Position Moyenne", getPosition());
+  }
+
+///////MÉTHODE POUR CONDUIRE
 
   public void conduire(double vx,double vz) {
     //vx la vitesse pour avancer et vz la vitesse pour tourner
@@ -84,6 +103,10 @@ public class BasePilotable extends SubsystemBase {
     //Bein Le Robot Bein y s'arrête
     autoConduire(0, 0);
   }
+
+
+
+  /////CONFIG DES MOTEURS
   public void setRamp(double ramp) {
     //Création de la ramp
       moteurDroit.configOpenloopRamp(ramp);
@@ -98,13 +121,11 @@ public class BasePilotable extends SubsystemBase {
     }
   }
 
-  @Override
-  public void periodic() {
-    // This method will be called once per scheduler run
-  }
 
+
+  ////////////////////GYRO
   public double getAngle() {
-    //Angle à Implémenter dans le DashBoard
+    //Angle
     return -gyro.getAngle();
   }
   
@@ -114,39 +135,42 @@ public class BasePilotable extends SubsystemBase {
   }
   
   public double getAngleSpeed() {
-    //Vitesse de l'angle à Implémenter dans le DashBoard
-    return filter.calculate(-gyro.getRate());
+    //Vitesse
+    return -gyro.getRate();
   } 
+
+
+  ////////////////ENCODEURS
   
   public double getPositionG() {
-    //Position du Moteur Gauche à Implémenter dans le DashBoard
-    return moteurGauche.getSelectedSensorPosition()*conversionMoteur;
+    //Position du Moteur Gauche 
+    return moteurGauche.getSelectedSensorPosition()*conversionEncodeur;
   }
   
   
   
   public double getPositionD() {
-    //Position du Moteur Droit à Implémenter dans le DashBoard
-    return moteurDroit.getSelectedSensorPosition()*conversionMoteur;
+    //Position du Moteur Droit  
+    return moteurDroit.getSelectedSensorPosition()*conversionEncodeur;
   }
   
   public double getPosition() {
-    //Position Moyenne des Moteurs à Implémenter dans le DashBoard
+    //Position Moyenne des Moteurs  
     return (getPositionG() + getPositionD() ) / 2.0;
   }
   
   public double getVitesseD() {
-    //Vitesse du Moteur Droit à Implémenter dans le DashBoard
+    //Vitesse du Moteur Droit  
     return moteurDroit.getSelectedSensorVelocity()*conversionEncodeur*10;//x10 car les encodeurs des Falcon donne des clics par 100 ms.
   }
   
   public double getVitesseG() {
-    //Vitesse du Moteur Gauche à Implémenter dans le DashBoard
+    //Vitesse du Moteur Gauche  
     return moteurGauche.getSelectedSensorVelocity()*conversionEncodeur*10;
   }
   
   public double getVitesse() {
-    //Vitesse du Moteur Moyenne à Implémenter dans le DashBoard
+    //Vitesse du Moteur Moyenne  
     return (getVitesseD() + getVitesseG()) / 2;
   }
   
@@ -157,6 +181,11 @@ public class BasePilotable extends SubsystemBase {
     moteurGauche.setSelectedSensorPosition(0);
   }
    
+
+
+
+
+  /////////////////CONTRÔLE AVANCÉ
   public double[] getOdometry(){
     double[] position = new double[3];
     double x = getPose().getTranslation().getX();
@@ -212,11 +241,4 @@ public class BasePilotable extends SubsystemBase {
       return ramseteCommand.andThen(()->stop());                             
   }
 
-  public double getVoltagePIDF(double angleCible, DoubleSupplier mesure) {
-    return tournerPID.calculate(mesure.getAsDouble(), angleCible) + tournerFF.calculate(tournerPID.getSetpoint().velocity);
-  }
-
-  public boolean atAngleCible(){
-   return tournerPID.atGoal();
-  }
 }
