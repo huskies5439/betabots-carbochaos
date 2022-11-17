@@ -43,8 +43,8 @@ import edu.wpi.first.math.util.Units;
 public class BasePilotable extends SubsystemBase {
   
   //Créer l'ensemble des moteurs de la base
-  private WPI_TalonFX moteurGauche = new WPI_TalonFX(1);
-  private WPI_TalonFX moteurDroit = new WPI_TalonFX(3);
+  private WPI_TalonFX moteurGauche = new WPI_TalonFX(3);
+  private WPI_TalonFX moteurDroit = new WPI_TalonFX(4);
   private DifferentialDrive drive = new DifferentialDrive(moteurGauche, moteurDroit);
 
   //Créer le gyro

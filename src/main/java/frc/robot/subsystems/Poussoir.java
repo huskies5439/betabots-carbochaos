@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Poussoir extends SubsystemBase {
-  private DoubleSolenoid piston = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 1, 2);
+  private DoubleSolenoid piston = new DoubleSolenoid(PneumaticsModuleType.CTREPCM, 0,1);
   
   public Poussoir() {
     rentrer();
