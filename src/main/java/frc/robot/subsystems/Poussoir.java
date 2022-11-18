@@ -20,11 +20,11 @@ public class Poussoir extends SubsystemBase {
   public void periodic() {}
 
   public void rentrer() {
-    piston.set(Value.kForward);
+    piston.set(Value.kReverse);
   }
 
   public void sortir() {
-    piston.set(Value.kReverse);
+    piston.set(Value.kForward);
   }
 
 }

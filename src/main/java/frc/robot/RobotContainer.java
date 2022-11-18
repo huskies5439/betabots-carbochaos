@@ -23,7 +23,7 @@ public class RobotContainer {
   public RobotContainer() {
     configureButtonBindings();
 
-    basePilotable.setDefaultCommand(new RunCommand(()-> basePilotable.conduire(manette.getLeftY(), manette.getRightY()),basePilotable));
+    basePilotable.setDefaultCommand(new RunCommand(()-> basePilotable.conduire(manette.getLeftY(), manette.getRightX()),basePilotable));
   }
 
   private void configureButtonBindings() {
