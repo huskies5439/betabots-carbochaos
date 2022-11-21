@@ -27,7 +27,7 @@ public class RobotContainer {
   }
 
   private void configureButtonBindings() {
-    new JoystickButton(manette, Button.kA.value).toggleWhenPressed(new Pousser(poussoir));
+    new JoystickButton(manette, Button.kA.value).whenHeld(new Pousser(poussoir));
   }
 
   public Command getAutonomousCommand() {
