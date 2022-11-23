@@ -23,11 +23,11 @@ public class RobotContainer {
   public RobotContainer() {
     configureButtonBindings();
 
-    basePilotable.setDefaultCommand(new RunCommand(()-> basePilotable.conduire(manette.getLeftY(), manette.getRightY()),basePilotable));
+    basePilotable.setDefaultCommand(new RunCommand(()-> basePilotable.conduire(manette.getLeftY(), manette.getRightX()),basePilotable));
   }
 
   private void configureButtonBindings() {
-    new JoystickButton(manette, Button.kA.value).toggleWhenPressed(new Pousser(poussoir));
+    new JoystickButton(manette, Button.kA.value).whenHeld(new Pousser(poussoir));
   }
 
   public Command getAutonomousCommand() {

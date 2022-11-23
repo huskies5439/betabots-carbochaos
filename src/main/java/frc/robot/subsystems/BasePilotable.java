@@ -2,6 +2,7 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
+
 package frc.robot.subsystems;
 
 import java.io.IOException;
@@ -11,10 +12,19 @@ import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.TalonFXSimCollection;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.wpilibj.ADXRS450_Gyro;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj.SPI;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
+import edu.wpi.first.math.filter.MedianFilter;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.math.filter.MedianFilter;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -43,20 +53,22 @@ import frc.robot.Constants;
 
 public class BasePilotable extends SubsystemBase {
   
-  private WPI_TalonFX moteurGauche = new WPI_TalonFX(1);
-  private WPI_TalonFX moteurDroit = new WPI_TalonFX(3);
+  //Créer l'ensemble des moteurs de la base
+  private WPI_TalonFX moteurGauche = new WPI_TalonFX(3);
+  private WPI_TalonFX moteurDroit = new WPI_TalonFX(4);
   
-
   TalonFXSimCollection m_leftDriveSim = moteurGauche.getSimCollection();
   TalonFXSimCollection m_rightDriveSim = moteurDroit.getSimCollection();
 
   private DifferentialDrive drive = new DifferentialDrive(moteurGauche, moteurDroit);
 
+  //Créer le gyro
+  private ADXRS450_Gyro gyro = new ADXRS450_Gyro(SPI.Port.kOnboardCS0);
+  
+  
+ 
   private double conversionEncodeur;
   private final double conversionMoteur = (1.0/2048)*(14.0/72)*(16.0/44)*Math.PI*Units.inchesToMeters(4);
-  //Initialisation du gyro
-  private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
-
   
 // Create the simulated gyro object, used for setting the gyro
 // angle. Like EncoderSim, this does not need to be commented out
@@ -70,14 +82,43 @@ private ADXRS450_GyroSim m_gyroSim = new ADXRS450_GyroSim(gyro);
   
   public BasePilotable() {
     //Configure les moteurs
-    conversionEncodeur = (1.0/2048)*(14.0/72)*(16.0/44)*Math.PI*Units.inchesToMeters(4); 
     setRamp(0);
     setBrake(false);
     moteurGauche.setInverted(true);
     moteurDroit.setInverted(false);
     SmartDashboard.putData("Field", m_field);
 
+    conversionEncodeur = (1.0/2048)*(14.0/72)*(16.0/44)*Math.PI*Units.inchesToMeters(4); 
+
+    //Faire les resets 
+    resetEncoder();
+    resetGyro();
+
   }
+
+  @Override
+  public void periodic() {
+    // This method will be called once per scheduler run
+   
+    SmartDashboard.putNumber("Angle", getAngle());
+    //SmartDashboard.putNumber("Vitesse Droite", getVitesseD());
+    //SmartDashboard.putNumber("Vitesse Gauche", getVitesseG());
+    SmartDashboard.putNumber("Vitesse Moyenne", getVitesse()); 
+    //SmartDashboard.putNumber("Position Droite", getPositionD());
+    //SmartDashboard.putNumber("Position Gauche", getPositionG());
+    SmartDashboard.putNumber("Position Moyenne", getPosition());
+
+          // This will get the simulated sensor readings that we set
+  // in the previous article while in simulation, but will use
+  // real values on the robot itself.
+   odometry.update(gyro.getRotation2d(),
+   nativeUnitsToDistanceMeters(moteurGauche.getSelectedSensorPosition()),
+   nativeUnitsToDistanceMeters(moteurDroit.getSelectedSensorPosition()));
+
+m_field.setRobotPose(odometry.getPoseMeters());
+  }
+
+///////MÉTHODE POUR CONDUIRE
 
   public void conduire(double vx,double vz) {
     //vx la vitesse pour avancer et vz la vitesse pour tourner
@@ -95,6 +136,10 @@ private ADXRS450_GyroSim m_gyroSim = new ADXRS450_GyroSim(gyro);
     //Bein Le Robot Bein y s'arrête
     autoConduire(0, 0);
   }
+
+
+
+  /////CONFIG DES MOTEURS
   public void setRamp(double ramp) {
     //Création de la ramp
       moteurDroit.configOpenloopRamp(ramp);
@@ -108,21 +153,10 @@ private ADXRS450_GyroSim m_gyroSim = new ADXRS450_GyroSim(gyro);
       moteurGauche.setNeutralMode(NeutralMode.Brake);
     }
   }
-
-  @Override
-  public void periodic() {
-      // This will get the simulated sensor readings that we set
-  // in the previous article while in simulation, but will use
-  // real values on the robot itself.
-   odometry.update(gyro.getRotation2d(),
-            nativeUnitsToDistanceMeters(moteurGauche.getSelectedSensorPosition()),
-            nativeUnitsToDistanceMeters(moteurDroit.getSelectedSensorPosition()));
   
-      m_field.setRobotPose(odometry.getPoseMeters());
-  }
-
+  ////////////////////GYRO
   public double getAngle() {
-    //Angle à Implémenter dans le DashBoard
+    //Angle
     return -gyro.getAngle();
   }
   
@@ -132,39 +166,42 @@ private ADXRS450_GyroSim m_gyroSim = new ADXRS450_GyroSim(gyro);
   }
   
   public double getAngleSpeed() {
-    //Vitesse de l'angle à Implémenter dans le DashBoard
-    return filter.calculate(-gyro.getRate());
+    //Vitesse
+    return -gyro.getRate();
   } 
+
+
+  ////////////////ENCODEURS
   
   public double getPositionG() {
-    //Position du Moteur Gauche à Implémenter dans le DashBoard
-    return moteurGauche.getSelectedSensorPosition()*conversionMoteur;
+    //Position du Moteur Gauche 
+    return moteurGauche.getSelectedSensorPosition()*conversionEncodeur;
   }
   
   
   
   public double getPositionD() {
-    //Position du Moteur Droit à Implémenter dans le DashBoard
-    return moteurDroit.getSelectedSensorPosition()*conversionMoteur;
+    //Position du Moteur Droit  
+    return moteurDroit.getSelectedSensorPosition()*conversionEncodeur;
   }
   
   public double getPosition() {
-    //Position Moyenne des Moteurs à Implémenter dans le DashBoard
+    //Position Moyenne des Moteurs  
     return (getPositionG() + getPositionD() ) / 2.0;
   }
   
   public double getVitesseD() {
-    //Vitesse du Moteur Droit à Implémenter dans le DashBoard
+    //Vitesse du Moteur Droit  
     return moteurDroit.getSelectedSensorVelocity()*conversionEncodeur*10;//x10 car les encodeurs des Falcon donne des clics par 100 ms.
   }
   
   public double getVitesseG() {
-    //Vitesse du Moteur Gauche à Implémenter dans le DashBoard
+    //Vitesse du Moteur Gauche  
     return moteurGauche.getSelectedSensorVelocity()*conversionEncodeur*10;
   }
   
   public double getVitesse() {
-    //Vitesse du Moteur Moyenne à Implémenter dans le DashBoard
+    //Vitesse du Moteur Moyenne  
     return (getVitesseD() + getVitesseG()) / 2;
   }
   
@@ -175,6 +212,11 @@ private ADXRS450_GyroSim m_gyroSim = new ADXRS450_GyroSim(gyro);
     moteurGauche.setSelectedSensorPosition(0);
   }
    
+
+
+
+
+  /////////////////CONTRÔLE AVANCÉ
   public double[] getOdometry(){
     double[] position = new double[3];
     double x = getPose().getTranslation().getX();
