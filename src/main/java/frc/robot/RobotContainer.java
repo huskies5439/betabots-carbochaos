@@ -31,6 +31,6 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return new RunCommand(()-> basePilotable.conduire(0, 0),basePilotable).withTimeout(1);
+    return new RunCommand(()-> new Pousser(poussoir),poussoir).withTimeout(5);
   }
 }

@@ -4,4 +4,13 @@
 
 package frc.robot;
 
-public final class Constants {}
+import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
+
+public final class Constants {
+
+    public static final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(0.63); //A verifier changer argument kinematic
+    public static final double kSRamsete = 0.6;
+    public static final double kVRamsete = 4.48;
+    public static final double kPRamsete = 2;
+    public static final double rampTeleop = 0.2;
+}
