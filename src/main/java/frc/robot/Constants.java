@@ -6,13 +6,10 @@ package frc.robot;
 
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 
-public final class Constants { //changer les données
+public final class Constants { //TO DO changer les données
     public static final DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(0); 
-    public static final double kVRamsete = 0;
-    public static final double kSRamsete = 0;
-    public static final double kPRamsete = 0;
-    public static final double rampTeleop = 0;
-    public static final double kARamsete = 0;
-    
-    public static final double kRampTeleOp  = 0;
+    public static final double kVRamsete = 4.48;
+    public static final double kSRamsete = 0.6;
+    public static final double kPRamsete = 2;
+    public static final double rampTeleop = 0.2;
 }

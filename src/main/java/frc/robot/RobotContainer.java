@@ -6,6 +6,7 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import frc.robot.commands.Conduire;
 import frc.robot.commands.Pousser;
 import frc.robot.subsystems.BasePilotable;
 import frc.robot.subsystems.Poussoir;
@@ -23,7 +24,7 @@ public class RobotContainer {
   public RobotContainer() {
     configureButtonBindings();
 
-    basePilotable.setDefaultCommand(new RunCommand(()-> basePilotable.conduire(manette.getLeftY(), manette.getRightX()),basePilotable));
+    basePilotable.setDefaultCommand(new Conduire(manette::getLeftY,manette::getRightX , basePilotable));
   }
 
   private void configureButtonBindings() {

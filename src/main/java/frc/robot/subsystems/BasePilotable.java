@@ -87,7 +87,7 @@ public class BasePilotable extends SubsystemBase {
 
   public void conduire(double vx,double vz) {
     //vx la vitesse pour avancer et vz la vitesse pour tourner
-    drive.arcadeDrive(-0.8*vx, 0.5*vz);
+    drive.arcadeDrive(-1*vx, 0.6*vz);
   }
 
   public void autoConduire(double voltGauche, double voltDroit) {
