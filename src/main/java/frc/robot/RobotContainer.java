@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import frc.robot.commands.Conduire;
 import frc.robot.commands.Pousser;
+import frc.robot.commands.auto.S;
 import frc.robot.subsystems.BasePilotable;
 import frc.robot.subsystems.Poussoir;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -21,6 +22,8 @@ public class RobotContainer {
  
   XboxController manette = new XboxController(0);
 
+  private final Command S = new S(basePilotable);
+
   public RobotContainer() {
     configureButtonBindings();
 
@@ -32,7 +35,8 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-    return new RunCommand(()-> basePilotable.conduire(0, 0),basePilotable).withTimeout(1);
+    //return new RunCommand(()-> basePilotable.conduire(0, 0),basePilotable).withTimeout(1);
+    return S;
   }
 
   

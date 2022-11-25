@@ -81,6 +81,8 @@ public class BasePilotable extends SubsystemBase {
     //SmartDashboard.putNumber("Position Droite", getPositionD());
     //SmartDashboard.putNumber("Position Gauche", getPositionG());
     SmartDashboard.putNumber("Position Moyenne", getPosition());
+    
+    odometry.update(Rotation2d.fromDegrees(getAngle()), getPositionG(), getPositionD());
   }
 
 ///////MÉTHODE POUR CONDUIRE

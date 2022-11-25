@@ -21,11 +21,11 @@ public class S extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new InstantCommand(() -> basePilotable.resetOdometry(trajet.getInitialPose())),
+      //new InstantCommand(() -> basePilotable.resetOdometry(trajet.getInitialPose())),
       new InstantCommand(() -> basePilotable.setRamp(0)),
-      new InstantCommand(() -> basePilotable.setBrake(true)),
+      new InstantCommand(() -> basePilotable.setBrake(true))/*,
 
-      basePilotable.ramseteSimple(trajet)
+      basePilotable.ramseteSimple(trajet)*/
 
       
     );
