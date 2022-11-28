@@ -118,6 +118,11 @@ public class BasePilotable extends SubsystemBase {
       moteurDroit.setNeutralMode(NeutralMode.Brake);
       moteurGauche.setNeutralMode(NeutralMode.Brake);
     }
+    else{
+      moteurDroit.setNeutralMode(NeutralMode.Coast);
+      moteurGauche.setNeutralMode(NeutralMode.Coast);
+
+    }
   }
 
 
