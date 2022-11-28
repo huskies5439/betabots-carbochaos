@@ -4,7 +4,7 @@
 
 package frc.robot.commands;
 
-import java.lang.invoke.ConstantBootstraps;
+
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
@@ -32,7 +32,7 @@ public class Conduire extends CommandBase {
   public void initialize() {
 
     basePilotable.setBrake(false);
-    basePilotable.setRamp(0.1);
+    basePilotable.setRamp(Constants.kRampTeleop);
   }
 
   // Called every time the scheduler runs while the command is scheduled.

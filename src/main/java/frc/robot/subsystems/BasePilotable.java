@@ -9,16 +9,15 @@ import java.io.IOException;
 import com.ctre.phoenix.motorcontrol.NeutralMode;
 import com.ctre.phoenix.motorcontrol.can.WPI_TalonFX;
 
-import edu.wpi.first.networktables.NetworkTableEntry;
+
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.SPI;
 import edu.wpi.first.math.controller.PIDController;
-import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
-import edu.wpi.first.math.filter.MedianFilter;
+
 import edu.wpi.first.wpilibj.drive.DifferentialDrive;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -28,12 +27,11 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
-import edu.wpi.first.math.trajectory.TrapezoidProfile;
+
 import edu.wpi.first.math.util.Units;
 
 
@@ -51,13 +49,12 @@ public class BasePilotable extends SubsystemBase {
   
  
   private double conversionEncodeur;
- // private final double conversionEncodeur = (1.0/2048)*(14.0/72)*(16.0/44)*Math.PI*Units.inchesToMeters(4);
   private DifferentialDriveOdometry odometry;
 
 
   public BasePilotable() {
     //Configure les moteurs
-    setRamp(0);
+    setRamp(Constants.kRampTeleop);
     setBrake(false);
     moteurGauche.setInverted(true);
     moteurDroit.setInverted(false);
@@ -67,6 +64,8 @@ public class BasePilotable extends SubsystemBase {
     //Faire les resets 
     resetEncoder();
     resetGyro();
+
+    odometry = new DifferentialDriveOdometry(Rotation2d.fromDegrees(getAngle()));
 
   }
 

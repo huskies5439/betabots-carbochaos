@@ -6,13 +6,14 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.Conduire;
 import frc.robot.commands.Pousser;
 import frc.robot.commands.auto.S;
 import frc.robot.subsystems.BasePilotable;
 import frc.robot.subsystems.Poussoir;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 public class RobotContainer {
@@ -22,9 +23,16 @@ public class RobotContainer {
  
   XboxController manette = new XboxController(0);
 
+  //trajets
+  private final SendableChooser<Command> chooser = new SendableChooser<>();
   private final Command S = new S(basePilotable);
 
   public RobotContainer() {
+
+    SmartDashboard.putData(chooser);
+    chooser.setDefaultOption("Trajet Vide", null);
+    chooser.addOption("Trajet en S", S);
+
     configureButtonBindings();
 
     basePilotable.setDefaultCommand(new Conduire(manette::getLeftY,manette::getRightX , basePilotable));
@@ -36,7 +44,7 @@ public class RobotContainer {
 
   public Command getAutonomousCommand() {
     //return new RunCommand(()-> basePilotable.conduire(0, 0),basePilotable).withTimeout(1);
-    return S;
+    return chooser.getSelected();
   }
 
   
