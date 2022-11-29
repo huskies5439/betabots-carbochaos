@@ -15,6 +15,7 @@ import frc.robot.subsystems.BasePilotable;
 import frc.robot.subsystems.Poussoir;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
 public class RobotContainer {
@@ -31,7 +32,7 @@ public class RobotContainer {
   public RobotContainer() {
 
     SmartDashboard.putData(chooser);
-    chooser.setDefaultOption("Trajet Vide", null);
+    chooser.setDefaultOption("Trajet Vide", new WaitCommand(14));
     chooser.addOption("Trajet en S", S);
 
     configureButtonBindings();
