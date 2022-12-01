@@ -1,0 +1,28 @@
+{
+  "SysId": {
+    "Analysis Type": "General Mechanism",
+    "Analyzer": {
+      "window": {
+        "visible": false
+      }
+    },
+    "Generator": {
+      "window": {
+        "visible": false
+      }
+    },
+    "Logger": {
+      "window": {
+        "visible": false
+      }
+    },
+    "NetworkTables Settings": {
+      "serverTeam": "5439"
+    },
+    "Program Log": {
+      "window": {
+        "visible": false
+      }
+    }
+  }
+}
