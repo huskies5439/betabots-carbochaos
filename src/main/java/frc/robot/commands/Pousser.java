@@ -18,7 +18,7 @@ public class Pousser extends CommandBase {
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    poussoir.sortir();
+    poussoir.rentrer();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -28,7 +28,7 @@ public class Pousser extends CommandBase {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    poussoir.rentrer();
+    poussoir.sortir();
   }
 
   // Returns true when the command should end.

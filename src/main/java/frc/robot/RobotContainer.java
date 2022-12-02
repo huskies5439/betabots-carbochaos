@@ -16,7 +16,6 @@ import frc.robot.commands.auto.Trajet4cubes;
 import frc.robot.subsystems.BasePilotable;
 import frc.robot.subsystems.Poussoir;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 
@@ -50,9 +49,8 @@ public class RobotContainer {
   }
 
   public Command getAutonomousCommand() {
-   // return new RunCommand(()-> basePilotable.autoConduire(2, -2),basePilotable).withTimeout(4);
     return chooser.getSelected();
-  }
+      }
 
   
 }
