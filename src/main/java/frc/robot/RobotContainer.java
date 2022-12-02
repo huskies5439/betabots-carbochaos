@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.commands.Conduire;
 import frc.robot.commands.Pousser;
 import frc.robot.commands.auto.S;
+import frc.robot.commands.auto.Trajet2cubes;
+import frc.robot.commands.auto.Trajet4cubes;
 import frc.robot.subsystems.BasePilotable;
 import frc.robot.subsystems.Poussoir;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -28,12 +30,15 @@ public class RobotContainer {
   //trajets
   private final SendableChooser<Command> chooser = new SendableChooser<>();
   private final Command S = new S(basePilotable);
-
+  private final Command trajet2cubes = new Trajet2cubes(basePilotable, poussoir);
+  private final Command trajet4cubes = new Trajet4cubes(basePilotable, poussoir);
   public RobotContainer() {
 
     SmartDashboard.putData(chooser);
     chooser.setDefaultOption("Trajet Vide", new WaitCommand(14));
     chooser.addOption("Trajet en S", S);
+    chooser.addOption("Trajet 2 cubes", trajet2cubes);
+    chooser.addOption("Trajet 4 cubes", trajet4cubes);
 
     configureButtonBindings();
 

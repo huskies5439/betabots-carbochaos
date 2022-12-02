@@ -235,7 +235,7 @@ public class BasePilotable extends SubsystemBase {
       trajectoire,                                                              
       this::getPose,                                                            
       new RamseteController(2, 0.7),                                            
-      new SimpleMotorFeedforward(Constants.kSRamsete, Constants.kVRamsete, 0),  
+      new SimpleMotorFeedforward(Constants.kSRamsete, Constants.kVRamsete, Constants.kARamsete),  
       Constants.kinematics,                                                   
       this::getWheelSpeeds,                                              
       new PIDController(Constants.kPRamsete, 0, 0),                          
