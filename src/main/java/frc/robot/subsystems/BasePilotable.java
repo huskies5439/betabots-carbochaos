@@ -59,6 +59,8 @@ public class BasePilotable extends SubsystemBase {
     moteurGauche.setInverted(true);
     moteurDroit.setInverted(false);
 
+    //en défaiant la bétabase on s'est rendu compte le pignon des Falcons a 12 dents
+    //donc, la valeur de 14 est probablement fausse, il faut vérifier pour bétabot 2023 !!!
     conversionEncodeur = (1.0/2048)*(14.0/72)*(16.0/44)*Math.PI*Units.inchesToMeters(4); 
 
     //Faire les resets 
